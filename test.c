@@ -11,10 +11,11 @@
 extern FILE *svg;
 extern int fid;
 
-int verbose = 1;
+extern int verbose;
 
 int main(int argc, char **argv) {
     // TODO
+    verbose = 1;
     return 0;
 }
 
