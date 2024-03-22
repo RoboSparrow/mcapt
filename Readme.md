@@ -17,12 +17,12 @@ Future plans:
 
 Mousedev event handler API
 
-    - https://www.kernel.org/doc/html/v5.5/input/input.html#mousedev
+ - https://www.kernel.org/doc/html/v5.5/input/input.html#mousedev
 
 PS/2 packet format(s)
 
-    - https://www.eecg.utoronto.ca/~jayar/ece241_08F/AudioVideoCores/ps2/ps2.html
-    - https://wiki.osdev.org/Mouse_Input
+ - https://www.eecg.utoronto.ca/~jayar/ece241_08F/AudioVideoCores/ps2/ps2.html
+ - https://wiki.osdev.org/Mouse_Input
 
 ## Usage
 
