@@ -3,7 +3,7 @@ SRCDIR=.
 INCDIR=.
 
 CFLAGS=-Wall -Wextra -Werror -Wpedantic -pedantic-errors
-CFLAGS=
+LOPT=
 
 HEADERS=$(INCDIR)/mcapt.h
 OBJECTS=mcapt.o
@@ -11,10 +11,10 @@ OBJECTS=mcapt.o
 all:	mcapt test
 
 mcapt:	$(OBJECTS) main.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LOPT)
 
 test:	$(OBJECTS) test.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LOPT)
 
 %.o:	%.c $(HEADERS)
 	$(CC) $(COPT) -c $< -o $@
