@@ -72,7 +72,6 @@ void input_close() {
     }
 }
 
-
 /**
  * WARNING:
  *      the behavior of signal() varies across UNIX versions, and has also varied historically across different versions of Linux.  Avoid its use: use sigaction(2) instead.  See Portability below.
@@ -90,7 +89,6 @@ void exit_handler() {
     input_close();
     dlog_close();
 }
-
 
 int dlog_listen_mousedev() {
 

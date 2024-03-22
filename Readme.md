@@ -29,13 +29,13 @@ PS/2 packet format(s)
 ### Record data
 
 ```
-Usage: (sudo) ./mcapt [OPTION]...
+Usage: (sudo) mcapt [OPTION]... [DATALOG]
+Record mouse movement into a comma-separated data file (DATALOG).
        -v, --verbose         enable verbose output
        -h, --help        show this help :)
 ```
 
-mouse movements are stored as comma-separated data
-
+Mouse movements are stored as comma-separated data. See `data/dlog.csv` if DATALOG path was not specified
 
 * data/dlog.csv
 
