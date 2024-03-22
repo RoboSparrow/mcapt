@@ -16,6 +16,7 @@
 
 #include "mcapt.h"
 
+
 extern FILE *dlog;
 extern int fid;
 
@@ -24,24 +25,35 @@ extern int verbose;
 
 void usage() {
     fprintf(stderr,
-        "Record mouse movement into a log.\n"
-        "Usage: (sudo) mcapt [OPTION]...\n"
+        "Usage: (sudo) mcapt [OPTION]... [DATALOG]\n"
+        "Record mouse movement into a comma-separated data file (DATALOG).\n"
         "       -v, --verbose \t\t enable verbose output\n"
         "       -h, --help \t\t show this help :)\n");
 }
 
 int main(int argc, char **argv) {
 
+    char dpath[1024] = { '\0' };
+
     if (argc >= 0) {
-      for (int i = 1; i < argc; i++) {
-          if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose")) {
-              verbose = 1;
-          }
-          if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
-              usage();
-              exit(0);
-          }
-      }
+        int tick = 0;
+        for (int i = 1; i < argc; i++) {
+            if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+                usage();
+                exit(0);
+            }
+            if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose")) {
+                verbose = 1;
+                tick = i;
+            }
+            if (i == argc - 1 && i > tick) { // last pos
+                strncpy(dpath, argv[i], 1024);
+            }
+        }
+    }
+
+    if (dpath[0] == '\0') {
+        strncpy(dpath, LOG, 1024);
     }
 
     // open device
@@ -50,16 +62,16 @@ int main(int argc, char **argv) {
     }
 
     // open log
-    if (dlog_open(LOG)) {
+    if (dlog_open(dpath)) {
         return EXIT_FAILURE;
     }
 
     fprintf(stdout, " - mcapt listening to '%s'\n", DEVICE);
-    fprintf(stdout, " - mcapt recording to '%s'\n", LOG);
+    fprintf(stdout, " - mcapt recording to '%s'\n", dpath);
 
-    signal(SIGTERM,  signal_handler);
-    signal(SIGKILL,  signal_handler);
-    signal(SIGINT,  signal_handler); // keyboard interrrupt (Ctrl+C)
+    signal(SIGTERM, signal_handler);
+    signal(SIGKILL, signal_handler);
+    signal(SIGINT, signal_handler); // keyboard interrrupt (Ctrl+C)
     atexit(exit_handler);
 
     int err = dlog_listen_mousedev();

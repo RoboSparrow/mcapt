@@ -1,42 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <time.h>
 
-// https://docs.oracle.com/cd/E26502_01/html/E29032/open-2.html
-// open()
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
 #include <fcntl.h>
-
-
+#include <time.h>
 #include <errno.h>
 #include <string.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+
 #include "mcapt.h"
+
 
 FILE *dlog = NULL;
 int fid = -1;
 
 int verbose = 0;
 
-int dlog_open(char *path) {
-    if (!path) {
-        LOG_ERROR("Could not open log (no path)");
+
+int dlog_open(char *dpath) {
+    if (!dpath) {
+        LOG_ERROR("Could not open log (no dpath)");
         return 0;
     }
 
-    dlog = fopen(path, "w");
+    dlog = fopen(dpath, "w");
     if (!dlog) {
-        LOG_ERROR_F("Could not open log '%s'! error: (%d), '%s'", path, errno, strerror(errno));
+        LOG_ERROR_F("Could not open log '%s'! error: (%d), '%s'", dpath, errno, strerror(errno));
         return 0;
     }
 
     // write header
     fprintf(dlog, "; time=%ld device=%s\n", time(NULL), DEVICE);
 
-    LOG_INFO_F("Opened dlog: '%s'", LOG);
+    LOG_INFO_F("Opened dlog: '%s'", dpath);
     return 0;
 }
 
@@ -49,7 +48,6 @@ void dlog_close() {
         dlog = NULL;
     }
 }
-
 
 int input_open(char *device) {
     if (!device) {
