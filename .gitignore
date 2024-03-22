@@ -1,0 +1,12 @@
+*.o
+
+dev.*
+dev/*
+
+data/*
+!data/.gitkeep
+testdata/*
+# !testdata/.gitkeep
+
+test
+mcapt

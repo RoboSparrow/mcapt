@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+####
+# usage:
+# ./vis path/to/mcapt-log
+####
+
+## vars
+
+dlog="${1:-./data/dlog.csv}"
+xpos=0
+ypos=0
+
+## utils
+
+function yellow {
+    echo -e "\033[0;33m${1}\033[0m"
+}
+
+function red {
+  echo -e "\033[0;31m${1}\033[0m"
+}
+
+function exit_error {
+  echo "$(red "[ERROR] ") ${1}"
+  exit 1
+}
+
+function require_file {
+    if [ ! -f "${1}" ]; then
+        exit_error "File '${1}' does not exist"
+    fi
+}
+
+## write
+
+function svg_line {
+
+    line="${1}"
+    svg="${2}"
+
+    # comment
+    if [[ "${line:0:1}" == ";" ]] ; then
+        echo "<!-- ${1} -->" >> "${svg}"
+        return
+    fi
+
+    # update abs xpos ypos by adding REL_X, REL_Y
+
+    x="$(echo ${line} | cut -d',' -f2)"
+    xpos="$((xpos + x))"
+
+    y="$(echo ${line} | cut -d',' -f3)"
+    ypos="$((ypos + y))"
+
+    # write data point
+
+    r="1"
+    fill="black"
+
+    echo "<circle cx=\"${xpos}\" cy=\"${ypos}\" r=\"${r}\" fill=\"${fill}\" />" >> "${svg}"
+}
+
+## load
+
+require_file "${dlog}"
+
+svg="$(echo ${dlog/csv/svg})"
+echo "$(yellow " * ")writing to '${svg}'"
+
+# first line, truncates existing file
+echo "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">" > "${svg}"
+
+## process
+
+while IFS= read -r line
+do
+    svg_line "${line}" "${svg}"
+done < "${dlog}"
+
+echo "</svg>" >> "${svg}"
