@@ -15,13 +15,6 @@
 
 extern FILE *dlog;
 extern int fid;
-extern int verbose;
-
-#define LOG_ERROR_F(format, ...) do { fprintf(stderr, "[error](%s:%d) " format "\n", __FILE__, __LINE__, __VA_ARGS__); } while(0)
-#define LOG_INFO_F(format, ...) do { if (verbose) { fprintf(stdout, "[info](%s:%d) " format "\n", __FILE__, __LINE__, __VA_ARGS__); } } while(0)
-
-#define LOG_ERROR(format) do { fprintf(stderr, "[error](%s:%d) " format "\n", __FILE__, __LINE__); } while(0)
-#define LOG_INFO(format) do { if (verbose) { fprintf(stdout, "[info](%s:%d) " format "\n", __FILE__, __LINE__); } } while(0)
 
 void signal_handler(int signo);
 void exit_handler();
