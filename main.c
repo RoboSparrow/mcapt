@@ -14,8 +14,9 @@
 #include <string.h>
 #include <signal.h>
 
+#include "mlog.h"
 #include "mcapt.h"
-
+#include "mscreen.h"
 
 extern FILE *dlog;
 extern int fid;
@@ -34,6 +35,7 @@ void usage() {
 int main(int argc, char **argv) {
 
     char dpath[1024] = { '\0' };
+    struct mscreen sdata = { 0 };
 
     if (argc >= 0) {
         int tick = 0;
@@ -56,6 +58,18 @@ int main(int argc, char **argv) {
         strncpy(dpath, LOG, 1024);
     }
 
+    // get screen data
+
+    if (mscreen_query(&sdata)) {
+        return EXIT_FAILURE;
+    }
+
+    if (verbose) {
+        fprintf(stdout, " - ");
+        mscreen_print(stdout, &sdata);
+        fprintf(stdout, "\n");
+    }
+
     // open device
     if (input_open(DEVICE)) {
         return EXIT_FAILURE;
@@ -66,8 +80,10 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    fprintf(stdout, " - mcapt listening to '%s'\n", DEVICE);
-    fprintf(stdout, " - mcapt recording to '%s'\n", dpath);
+    if (!verbose) {
+        fprintf(stdout, " - mcapt listening to '%s'\n", DEVICE);
+        fprintf(stdout, " - mcapt recording to '%s'\n", dpath);
+    }
 
     signal(SIGTERM, signal_handler);
     signal(SIGKILL, signal_handler);
