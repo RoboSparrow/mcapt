@@ -58,7 +58,7 @@ int input_open(char *device) {
 
     fid = open(device, O_RDONLY);
     if (fid < 0) {
-        LOG_ERROR_F("Could not open %s input device! (fid = %d), error: (%d), '%s'", DEVICE, fid, errno, strerror(errno));
+        LOG_ERROR_F("Could not open %s input device! (fid = %d), error: (%d), '%s'", device, fid, errno, strerror(errno));
         return EXIT_FAILURE;
     }
     LOG_INFO_F("Opened %s device!", DEVICE);// TODO close onexit
