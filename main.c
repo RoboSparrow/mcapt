@@ -49,7 +49,9 @@ int main(int argc, char **argv) {
                 tick = i;
             }
             if (i == argc - 1 && i > tick) { // last pos
-                strncpy(dpath, argv[i], 1024);
+                if (argv[i][0] != '-') { // not an option
+                    strncpy(dpath, argv[i], 1024);
+                }
             }
         }
     }
