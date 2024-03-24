@@ -34,7 +34,7 @@ int dlog_open(char *dpath) {
     }
 
     // write header
-    fprintf(dlog, "; time=%ld device=%s\n", time(NULL), DEVICE);
+    fprintf(dlog, "; time=%ld device=%s\n", time(NULL), dpath);
 
     LOG_INFO_F("Opened dlog: '%s'", dpath);
     return 0;
@@ -61,7 +61,7 @@ int input_open(char *device) {
         LOG_ERROR_F("Could not open %s input device! (fid = %d), error: (%d), '%s'", device, fid, errno, strerror(errno));
         return EXIT_FAILURE;
     }
-    LOG_INFO_F("Opened %s device!", DEVICE);// TODO close onexit
+    LOG_INFO_F("Opened %s device!", device);// TODO close onexit
 
     return 0;
 }
@@ -114,7 +114,7 @@ int dlog_listen_mousedev() {
 
         bytes = read(fid, data, sizeof(data));
         if (bytes <= 0) {
-            LOG_ERROR_F("read events for %s device! (fid = %d), error: (%d), '%s'", DEVICE, bytes, errno, strerror(errno));
+            LOG_ERROR_F("Error reading events! (fid = %d), error: (%d), '%s'", bytes, errno, strerror(errno));
             return EXIT_FAILURE;
         }
 
