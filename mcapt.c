@@ -42,12 +42,9 @@ int dlog_open(char *dpath) {
 
 void dlog_close() {
     if (dlog)  {
-        // write footer
-        fprintf(dlog, "; time=%ld\n", time(NULL));
-
         fclose(dlog);
-        dlog = NULL;
     }
+    dlog = NULL;
 }
 
 int input_open(char *device) {
@@ -69,20 +66,8 @@ int input_open(char *device) {
 void input_close() {
     if (fid >= 0)  {
         close(fid);
-        fid = -1;
     }
-}
-
-/**
- * WARNING:
- *      the behavior of signal() varies across UNIX versions, and has also varied historically across different versions of Linux.  Avoid its use: use sigaction(2) instead.  See Portability below.
- *  ^ TODO
- */
-
-void signal_handler(int signo) {
-    LOG_INFO_F("received signal %d", signo);
-    input_close();
-    dlog_close();
+    fid = -1;
 }
 
 void exit_handler() {
@@ -107,6 +92,7 @@ int dlog_listen_mousedev() {
     int el = 0;
 
     while (1) {
+        printf("---\n");
 
         if (fid < 0) {
             continue; // exiting...

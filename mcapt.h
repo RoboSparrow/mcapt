@@ -16,7 +16,6 @@
 extern FILE *dlog;
 extern int fid;
 
-void signal_handler(int signo);
 void exit_handler();
 
 int dlog_open(char *path);

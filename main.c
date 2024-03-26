@@ -87,9 +87,6 @@ int main(int argc, char **argv) {
         fprintf(stdout, " - mcapt recording to '%s'\n", dpath);
     }
 
-    signal(SIGTERM, signal_handler);
-    signal(SIGKILL, signal_handler);
-    signal(SIGINT, signal_handler); // keyboard interrrupt (Ctrl+C)
     atexit(exit_handler);
 
     int err = dlog_listen_mousedev();
