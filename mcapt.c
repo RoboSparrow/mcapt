@@ -92,7 +92,6 @@ int dlog_listen_mousedev() {
     int el = 0;
 
     while (1) {
-        printf("---\n");
 
         if (fid < 0) {
             continue; // exiting...
