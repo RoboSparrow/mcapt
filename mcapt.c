@@ -24,13 +24,13 @@ int verbose = 0;
 int dlog_open(char *dpath) {
     if (!dpath) {
         LOG_ERROR("Could not open log (no dpath)");
-        return 0;
+        return 1;
     }
 
     dlog = fopen(dpath, "w");
     if (!dlog) {
         LOG_ERROR_F("Could not open log '%s'! error: (%d), '%s'", dpath, errno, strerror(errno));
-        return 0;
+        return 1;
     }
 
     // write header
