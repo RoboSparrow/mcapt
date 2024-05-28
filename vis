@@ -10,7 +10,7 @@
 dlog="${1:-./data/dlog.csv}"
 xpos=0
 ypos=0
-
+init=1
 ## utils
 
 function yellow {
@@ -48,17 +48,33 @@ function svg_line {
     # update abs xpos ypos by adding REL_X, REL_Y
 
     x="$(echo ${line} | cut -d',' -f2)"
-    xpos="$((xpos + x))"
-
     y="$(echo ${line} | cut -d',' -f3)"
-    ypos="$((ypos + y))"
 
-    # write data point
+    x1="${xpos}"
+    y1="${ypos}"
 
-    r="1"
-    fill="black"
+    x2="$((xpos + x))"
+    y2="$((ypos + y))"
 
-    echo "<circle cx=\"${xpos}\" cy=\"${ypos}\" r=\"${r}\" fill=\"${fill}\" />" >> "${svg}"
+    # svg
+
+    r="2"
+    fill="red"
+    stroke="black"
+
+    # write single data point
+    echo "<circle cx=\"${x2}\" cy=\"${y2}\" r=\"${r}\" fill=\"${fill}\" />" >> "${svg}"
+
+    # write line
+    if [ "${init}" -eq "0" ]; then
+        echo "<line x1=\"${x1}\" y1=\"${y1}\" x2=\"${x2}\" y2=\"${y2}\" stroke=\"${stroke}\" />" >> "${svg}"
+    fi
+
+    # update prev
+
+    xpos="${x2}"
+    ypos="${y2}"
+    init=0
 }
 
 ## load
