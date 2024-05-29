@@ -41,10 +41,11 @@ Mouse movements are stored as comma-separated data. See `data/dlog.csv` if DATAL
 
 ```csv
 ; time=1711060390 device=/dev/input/mice
+; display=0, screenw=1920, screenh=1080, mousex=0, mousey=0
 1220632,-11,3,0,0,0
 1228569,-9,2,0,0,0
 1236311,-5,2,0,0,0
-; time=1711060394
+...
 ```
 
 data format:
