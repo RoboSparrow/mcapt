@@ -24,13 +24,13 @@ int verbose = 0;
 int dlog_open(char *dpath) {
     if (!dpath) {
         LOG_ERROR("Could not open log (no dpath)");
-        return 0;
+        return 1;
     }
 
     dlog = fopen(dpath, "w");
     if (!dlog) {
         LOG_ERROR_F("Could not open log '%s'! error: (%d), '%s'", dpath, errno, strerror(errno));
-        return 0;
+        return 1;
     }
 
     // write header
@@ -92,7 +92,6 @@ int dlog_listen_mousedev() {
     int el = 0;
 
     while (1) {
-        printf("---\n");
 
         if (fid < 0) {
             continue; // exiting...

@@ -14,6 +14,7 @@ struct mscreen {
 };
 
 void mscreen_print(FILE *fp, struct mscreen *sdata);
+int mscreen_dlog(FILE *fp, struct mscreen *sdata);
 int mscreen_query(struct mscreen *sdata);
 
 #endif

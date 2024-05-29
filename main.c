@@ -82,6 +82,11 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+    // write screen data to header
+    if (mscreen_dlog(dlog, &sdata)) {
+        return EXIT_FAILURE;
+    }
+
     if (!verbose) {
         fprintf(stdout, " - mcapt listening to '%s'\n", DEVICE);
         fprintf(stdout, " - mcapt recording to '%s'\n", dpath);

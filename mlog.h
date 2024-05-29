@@ -9,5 +9,4 @@ extern int verbose;
 #define LOG_ERROR(format) do { fprintf(stderr, "[error](%s:%d) " format "\n", __FILE__, __LINE__); } while(0)
 #define LOG_INFO(format) do { if (verbose) { fprintf(stdout, "[info](%s:%d) " format "\n", __FILE__, __LINE__); } } while(0)
 
-
 #endif

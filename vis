@@ -7,11 +7,17 @@
 
 ## vars
 
-dlog="${1:-./data/dlog.csv}"
+dlog="${1:-./data/dlog.csv}" # arg[1] or default
+
 xpos=0
 ypos=0
+init=1
 
 ## utils
+
+function green {
+    echo -e "\033[0;32m${1}\033[0m"
+}
 
 function yellow {
     echo -e "\033[0;33m${1}\033[0m"
@@ -32,7 +38,25 @@ function require_file {
     fi
 }
 
+function require_var {
+    if [ -z "${!1+x}" ]; then
+        exit_error "Variable '${1}' does not exist"
+    fi
+    if [ -z "${!1}" ]; then
+        exit_error "Variable '${1}' ' is empty"
+    fi
+    # echo "[OK] ${1}='${!1}'"
+}
+
 ## write
+
+function parse_header_value {
+    # parse value for a given key from a line like this: '; display=0, screenw=1920, screenh=1080, mousex=860, mousey=950'
+    line="${1}"
+    key="${2}"
+
+    echo "${line}" | grep -Po "(?:^| |,)${key}=\K[^,]+"
+}
 
 function svg_line {
 
@@ -48,17 +72,35 @@ function svg_line {
     # update abs xpos ypos by adding REL_X, REL_Y
 
     x="$(echo ${line} | cut -d',' -f2)"
-    xpos="$((xpos + x))"
-
     y="$(echo ${line} | cut -d',' -f3)"
-    ypos="$((ypos + y))"
 
-    # write data point
+    x1="${xpos}"
+    y1="${ypos}"
 
-    r="1"
-    fill="black"
+    x2="$((xpos + x))"
+    y2="$((ypos + y))"
 
-    echo "<circle cx=\"${xpos}\" cy=\"${ypos}\" r=\"${r}\" fill=\"${fill}\" />" >> "${svg}"
+    # echo " -> ${xpos},${ypos} ${1},${x1}  ${x2},${y2} "
+
+    # svg
+
+    r="2"
+    fill="red"
+    stroke="black"
+
+    # write single data point
+    echo "<circle cx=\"${x2}\" cy=\"${y2}\" r=\"${r}\" fill=\"${fill}\" />" >> "${svg}"
+
+    # write line
+    if [ "${init}" -eq "0" ]; then
+        echo "<line x1=\"${x1}\" y1=\"${y1}\" x2=\"${x2}\" y2=\"${y2}\" stroke=\"${stroke}\" />" >> "${svg}"
+    fi
+
+    # update prev
+
+    xpos="${x2}"
+    ypos="${y2}"
+    init=0
 }
 
 ## load
@@ -66,16 +108,44 @@ function svg_line {
 require_file "${dlog}"
 
 svg="$(echo ${dlog/csv/svg})"
-echo "$(yellow " * ")writing to '${svg}'"
+echo " * writing to $(yellow "'${svg}'")"
 
 # first line, truncates existing file
 echo "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">" > "${svg}"
 
+## parse screen values from header
+
+# line no 2
+
+line="$(sed -n '2p' "${dlog}")"
+
+screenw=$(parse_header_value  "${line}" "screenw")
+require_var "screenw"
+
+screenh=$(parse_header_value  "${line}" "screenh")
+require_var "screenh"
+
+mousex=$(parse_header_value  "${line}" "mousex")
+require_var "mousex"
+
+mousey=$(parse_header_value  "${line}" "mousey")
+require_var "mousey"
+
+# draw bg and set start points
+fill="lightgrey"
+echo "<rect width=\"${screenw}\" height=\"${screenh}\" x=\"0\" y=\"0\" fill=\"${fill}\" />" >> "${svg}"
+
+xpos="${mousex}"
+ypos="${mousey}"
+
 ## process
 
+count=0
 while IFS= read -r line
 do
     svg_line "${line}" "${svg}"
+    count=$((count + 1))
 done < "${dlog}"
 
 echo "</svg>" >> "${svg}"
+echo " * ${count} lines written into $(yellow "'${svg}'")"
