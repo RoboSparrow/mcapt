@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <SDL2/SDL.h>
+
+// To make sure there will be no header conflicts, you can define GLFW_INCLUDE_NONE before the GLFW header
+//   to explicitly disable inclusion of the development environment header.
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #include "mlog.h"
 #include "mscreen.h"
@@ -46,6 +50,12 @@ int mscreen_dlog(FILE *fp, struct mscreen *sdata) {
     return 0;
 }
 
+
+
+static void _error_callback(int err, const char* reason) {
+    LOG_ERROR_F("GFLW3 Error %d: %s\n", err, reason);
+}
+
 /**
  * Spawns a temporary hidden fullscreen SDL window in order to capture screen and absolute mouse position.
  * returns 0 on success reading or -1 on error
@@ -65,71 +75,62 @@ int mscreen_query(struct mscreen *sdata) {
     }
 
     // init
+    double mousex, mousey;
 
-    int open = 1;
     sdata->display = 0; // current display TODO superficial, because zeroed struct, but left for readability
     sdata->mousex = 0; // forcibly ensure zero-ness, we will test for success on this field
 
     unsigned long start, now;
     start = (unsigned long) time(NULL);
 
-    SDL_Window *window;
-    SDL_Event event;
-    SDL_DisplayMode mode = { .w = 0, .h = 0 };
+    glfwSetErrorCallback(_error_callback);
 
-    if (SDL_Init(SDL_INIT_VIDEO) ) {
-        LOG_ERROR_F("SDL_Init() failed: '%s'", SDL_GetError());
+    if (!glfwInit()) {
+        LOG_ERROR_F("glfwInit() failed with code: '%d'", glfwGetError(NULL));
         return -1;
     }
 
-    // create window
-
-    Uint32 flags = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_BORDERLESS | SDL_WINDOW_MAXIMIZED| SDL_WINDOW_HIDDEN;
-    window = SDL_CreateWindow("mcapt", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, flags);
-    if(!window) {
-        LOG_ERROR_F("SDL_CreateWindow() failed: '%s'", SDL_GetError());
+    // TODO only supporting single (primary) monitor
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    if (!monitor) {
+        LOG_ERROR_F("glfwGetPrimaryMonitor() failed with code: '%d'", glfwGetError(NULL));
         return -1;
     }
 
-    // read data
-
-    while (open > 0) {
-        SDL_WaitEvent(&event);
-
-        switch (event.type) {
-            case SDL_QUIT:
-                open = 0;
-                break;
-        }
-
-        SDL_GetGlobalMouseState(&(sdata->mousex), &(sdata->mousey));
-        // printf(" - mx %d, my: %d\n", sdata->mousex, sdata->mousey);
-
-        if (SDL_GetDesktopDisplayMode(sdata->display, &mode)) {
-            LOG_ERROR_F("SDL_GetDesktopDisplayMode() failed: '%s'", SDL_GetError());
-            open = -1;
-        }
-
-        // success
-
-        if (sdata->mousex >= 0 && mode.w > 0) {
-            sdata->screenw = mode.w;
-            sdata->screenh = mode.h;
-            open = 0;
-        }
-
-        // timeout
-
-        now = (unsigned long) time(NULL);
-        if (now - start > MSCREEN_MAX_SEC) {
-            LOG_ERROR_F("No results after %d seconds, closing testapp", MSCREEN_MAX_SEC);
-            open = -1;
-        }
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    if (!mode) {
+        LOG_ERROR_F("glfwGetVideoMode() failed with code: '%d'", glfwGetError(NULL));
+        return -1;
     }
 
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-    return open;
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "My Title", monitor, NULL);
+
+    if (!window) {
+        LOG_ERROR_F("glfwCreateWindow() failed with code: '%d'", glfwGetError(NULL));
+        return -1;
+    }
+
+    while (1) {
+        glfwGetCursorPos(window, &mousex, &mousey);
+        break;
+    }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    sdata->screenw = (int) mode->width;
+    sdata->screenh = (int) mode->height;
+    sdata->mousex = (int) mousex;
+    sdata->mousey = (int) mousey;
+
+    return 0;
 }
-
