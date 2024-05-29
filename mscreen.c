@@ -25,6 +25,27 @@ void mscreen_print(FILE *fp, struct mscreen *sdata) {
     );
 }
 
+int mscreen_dlog(FILE *fp, struct mscreen *sdata) {
+    if(!fp) {
+        LOG_ERROR("Could not write to dlog file (NULL)");
+        return 1;
+    }
+    if(!sdata) {
+        LOG_ERROR("no screendata to write (NULL)");
+        return 1;
+    }
+    fprintf(
+        fp,
+        "; display=%d, screenw=%d, screenh=%d, mousex=%d, mousey=%d\n",
+        sdata->display,
+        sdata->screenw,
+        sdata->screenh,
+        sdata->mousex,
+        sdata->mousey
+    );
+    return 0;
+}
+
 /**
  * Spawns a temporary hidden fullscreen SDL window in order to capture screen and absolute mouse position.
  * returns 0 on success reading or -1 on error
