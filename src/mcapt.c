@@ -82,7 +82,6 @@ int dlog_listen_mousedev() {
     unsigned char data[MPACKET];
 
     int lb, mb, rb;   // mouse buttons
-    unsigned long ts; // timestamp
     signed char rx, ry; // mouse REL_X, REL_Y
 
     struct timeval tv;

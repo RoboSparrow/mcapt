@@ -16,6 +16,7 @@ extern int verbose;
 int main(int argc, char **argv) {
     // TODO
     verbose = 1;
+    printf(" * Running tests..\n");
     return 0;
 }
 
