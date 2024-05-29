@@ -67,6 +67,10 @@ static void _error_callback(int err, const char* reason) {
  *     fprintf(stdout, "(%d) ", state);
  *     mscreen_print(stdout, &sdata);
  *     fprintf(stdout, "\n");
+ *
+ * GFLW:
+ *  - https://www.glfw.org/docs/latest/window_guide.html
+ *  - https://github.com/glfw/glfw/blob/master/src/internal.h#L530
  */
 int mscreen_query(struct mscreen *sdata) {
     if(!sdata) {
