@@ -77,16 +77,26 @@ function svg_line {
     x1="${xpos}"
     y1="${ypos}"
 
-    x2="$((xpos + x))"
-    y2="$((ypos + y))"
+    # x2="$((xpos + x))"
+    # y2="$((ypos + y))"
+
+    # see #4 mousedev and glfw using inverted coordinate sysyems (glfw: top - down, mousedev; bottom - up)
+
+    x2="$((xpos - x))"
+    y2="$((ypos - y))"
 
     # echo " -> ${xpos},${ypos} ${1},${x1}  ${x2},${y2} "
 
     # svg
 
-    r="2"
-    fill="red"
-    stroke="black"
+    r="1"
+    fill="blue"
+    stroke="grey"
+
+    if [ "${init}" -eq "1" ]; then
+        r=2
+        fill="red" # enhance first point
+    fi
 
     # write single data point
     echo "<circle cx=\"${x2}\" cy=\"${y2}\" r=\"${r}\" fill=\"${fill}\" />" >> "${svg}"
