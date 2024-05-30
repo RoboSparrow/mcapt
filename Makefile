@@ -3,9 +3,8 @@ SRCDIR=src
 INCDIR=$(SRCDIR)
 TESTDIR=tests
 
-
 CFLAGS=-Wall -Wextra -Werror -Wpedantic -pedantic-errors
-LOPT=-lSDL2
+LOPT=-lglfw
 
 HEADERS=$(INCDIR)/mcapt.h $(INCDIR)/mscreen.h $(INCDIR)/mlog.h
 OBJECTS=$(SRCDIR)/mcapt.o $(SRCDIR)/mscreen.o
