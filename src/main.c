@@ -16,18 +16,18 @@
 
 #include "mlog.h"
 #include "mcapt.h"
-#include "mscreen.h"
+
+
+#define DLOG "./data/dlog.csv"
 
 extern FILE *dlog;
-extern int fid;
-
 extern int verbose;
 
 
 void usage() {
     fprintf(stderr,
-        "Usage: (sudo) mcapt [OPTION]... [DATALOG]\n"
-        "Record mouse movement into a comma-separated data file (DATALOG).\n"
+        "Usage: (sudo) mcapt [OPTION]... [DATAtime_start]\n"
+        "Record mouse movement into a comma-separated data file (DATAtime_start).\n"
         "       -v, --verbose \t\t enable verbose output\n"
         "       -h, --help \t\t show this help :)\n");
 }
@@ -57,13 +57,7 @@ int main(int argc, char **argv) {
     }
 
     if (dpath[0] == '\0') {
-        strncpy(dpath, LOG, 1024);
-    }
-
-    // get screen data
-
-    if (mscreen_query(&sdata)) {
-        return EXIT_FAILURE;
+        strncpy(dpath, DLOG, 1024);
     }
 
     if (verbose) {
@@ -72,29 +66,18 @@ int main(int argc, char **argv) {
         fprintf(stdout, "\n");
     }
 
-    // open device
-    if (input_open(DEVICE)) {
-        return EXIT_FAILURE;
-    }
-
     // open log
     if (dlog_open(dpath)) {
         return EXIT_FAILURE;
     }
 
-    // write screen data to header
-    if (mscreen_dlog(dlog, &sdata)) {
-        return EXIT_FAILURE;
-    }
-
     if (!verbose) {
-        fprintf(stdout, " - mcapt listening to '%s'\n", DEVICE);
         fprintf(stdout, " - mcapt recording to '%s'\n", dpath);
     }
 
     atexit(exit_handler);
 
-    int err = dlog_listen_mousedev();
+    int err = mscreen_query(&sdata);
     if (err) {
         exit(err); // logging is done inside function
     }

@@ -1,29 +1,34 @@
 #ifndef __MCAPT_H__
 #define __MCAPT_H__
 
-#define DEVICE "/dev/input/mice"
-#define LOG "./data/dlog.csv"
-
-// mousedev stream packet size
-// - https://wiki.osdev.org/Mouse_Input
-// - https://www.kernel.org/doc/html/v5.5/input/input.html#mousedev
-#define PS2 3 // PS/2 protocol, default: [x,y,lbtn|mbtn|rbtn] 3 bytes width
-#define IMPS2 4 // IMPS/2 protoclo: additional 4th byte for mousewheel (TODO, curr unsupported)
-#define MPACKET PS2
-
-#define MICROSEC(TV) (TV.tv_sec * 1000000) + TV.tv_usec
-
 extern FILE *dlog;
-extern int fid;
 
 void exit_handler();
 
 int dlog_open(char *path);
+int dlog_write(char *format, ...);
 void dlog_close();
 
-int input_open(char *device);
-void input_close();
+/**
+ * GFLW:
+ * - https://www.glfw.org/docs/latest/window_guide.html
+ *
+ * - struct _GLFWwindow: https://github.com/glfw/glfw/blob/master/src/internal.h#L530
+ * - struct _GLFWmonitor: https://github.com/glfw/glfw/blob/master/src/internal.h#L592
+ * - struct _GLFWcontext: https://github.com/glfw/glfw/blob/master/src/internal.h#L489
+ */
+struct mscreen {
+    int primary;
+    char monitor[128];
 
-int dlog_listen_mousedev();
+    double width;
+    double height;
+
+    double mousex;
+    double mousey;
+};
+
+void mscreen_print(FILE *fp, struct mscreen *sdata);
+int mscreen_query(struct mscreen *sdata);
 
 #endif

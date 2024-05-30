@@ -6,8 +6,8 @@ TESTDIR=tests
 CFLAGS=-Wall -Wextra -Werror -Wpedantic -pedantic-errors
 LOPT=-lglfw
 
-HEADERS=$(INCDIR)/mcapt.h $(INCDIR)/mscreen.h $(INCDIR)/mlog.h
-OBJECTS=$(SRCDIR)/mcapt.o $(SRCDIR)/mscreen.o
+HEADERS=$(INCDIR)/mcapt.h $(INCDIR)/mlog.h
+OBJECTS=$(SRCDIR)/mcapt.o
 
 all:	mcapt test
 
