@@ -138,17 +138,18 @@ int mscreen_query(struct mscreen *sdata) {
         return -1;
     }
 
-    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-    glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_FOCUSED, GLFW_FALSE);
+    glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_FALSE);
+
+    // Top and transparent
+    glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
     // glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_TRUE); // TODO ‘GLFW_MOUSE_PASSTHROUGH’ undeclared, requires glfw >= 3.4
 
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "My Title", monitor, NULL);
+    glfwSwapInterval(1);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Overlay", monitor, NULL);
 
     if (!window) {
         LOG_ERROR_F("glfwCreateWindow() failed with code: '%d'", glfwGetError(NULL));
